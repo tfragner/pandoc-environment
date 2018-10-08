@@ -21,10 +21,6 @@ def youtubevideo(e, doc):
             else:
                 youtube = latex('\\todo[caption=' + pf.stringify(e) + ', color=black!0, linecolor=blue!50]{\\qrcode[height=1.75cm]{' + e.url + '}}')
             return [youtube]
-    elif type(e) == pf.Link and doc.format == 'html':
-        if 'youtube.com' in e.url or 'youtu.be' in e.url:
-            youtube = html('<iframe height="250" src="' + e.url + '"></iframe>')
-            return [youtube]
 
 if __name__ == "__main__":
     pf.toJSONFilter(youtubevideo)
