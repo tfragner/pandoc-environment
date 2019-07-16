@@ -15,7 +15,7 @@ def html(s):
 
 def youtubevideo(e, doc):
     if type(e) == pf.Link and doc.format == 'latex':
-        if 'youtube.com' in e.url or 'youtu.be' in e.url:
+        if 'youtube.com' in e.url or 'youtu.be' in e.url or 'forms' in e.url:
             if "for-image" in e.attributes:
                 youtube = latex('\\vspace{-2.5em}\\todo[caption=' + pf.stringify(e) + ', color=black!0, linecolor=blue!50]{\\qrcode[height=1.75cm]{' + e.url + '}}')
             else:
