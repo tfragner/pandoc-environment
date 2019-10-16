@@ -6,11 +6,14 @@ from panflute import *
 from collections import OrderedDict
 
 last = []
-
+first = True
 def action(elem, doc):
-    if isinstance(elem, Div):
+    global first
+    if first:
         meta = doc.get_metadata()
-        debug(meta)
+        if not 'versionen' in meta.keys():
+            first = False
+            return
         last.append(meta['versionen'][-1])
         rows = []
         versions = []
@@ -29,25 +32,31 @@ def action(elem, doc):
         table = Table(*rows, header=header,width=[1,2,4,2,4,2,4])
         header2 = TableRow(TableCell(Para(Str('Ver'))), TableCell(Para(Str('Ersteller'))))
         table2 = Table(*versions, header=header2, width=[1,10])
-        
+        h0 = Header(Str("Änderungsnachweise"), level=2)
         h1 = Header(Str("Versionen"), level=3)
         h2 = Header(Str("Änderungen"), level=3)
-        return [h1, table, h2, table2]
+        
+        doc.content.insert(0, table2)
+        doc.content.insert(0, table)
+        doc.content.insert(0, Para(Strong(Str(meta['slug']))))
+        first = False
 
         
 def finalize(doc):
-    author = MetaString(last[0]['ersteller'])
-    date = MetaString(last[0]['erstelldatum'])
-    kurzbeschreibung = MetaString(last[0]['kurzbeschreibung'])
-    doc.metadata['author'] = author
-    doc.metadata['ersteller'] = MetaString(last[0]['ersteller'])
-    doc.metadata['erstelldatum'] = MetaString(last[0]['erstelldatum'])
-    doc.metadata['pruefer'] = MetaString(last[0]['pruefer'])
-    doc.metadata['pruefdatum'] = MetaString(last[0]['pruefdatum'])
-    doc.metadata['freigeber'] = MetaString(last[0]['freigeber'])
-    doc.metadata['freigabedatum'] = MetaString(last[0]['freigabedatum'])
-    doc.metadata['date'] = date
-    doc.metadata['kurzbeschreibung'] = kurzbeschreibung
+    if len(last) > 0:
+        author = MetaString(last[0]['ersteller'])
+        date = MetaString(last[0]['erstelldatum'])
+        kurzbeschreibung = MetaString(last[0]['kurzbeschreibung'])
+        doc.metadata['author'] = author
+        doc.metadata['version'] = MetaString(last[0]['version'])
+        doc.metadata['ersteller'] = MetaString(last[0]['ersteller'])
+        doc.metadata['erstelldatum'] = MetaString(last[0]['erstelldatum'])
+        doc.metadata['pruefer'] = MetaString(last[0]['pruefer'])
+        doc.metadata['pruefdatum'] = MetaString(last[0]['pruefdatum'])
+        doc.metadata['freigeber'] = MetaString(last[0]['freigeber'])
+        doc.metadata['freigabedatum'] = MetaString(last[0]['freigabedatum'])
+        doc.metadata['date'] = date
+        doc.metadata['kurzbeschreibung'] = kurzbeschreibung
 
 def main(doc=None):
     return run_filters(actions=[action], doc=doc, finalize=finalize)

@@ -10,7 +10,7 @@ def action(elem, doc):
     global first
     if first:
         m = doc.get_metadata('title', 'Unknown')
-        h1 = Header(Str(m), level=1)
+        h1 = RawBlock('\part{'+ m + '}', format='latex')
         doc.content.insert(0,h1)
         first = False
         

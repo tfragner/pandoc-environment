@@ -2,7 +2,6 @@ local vars = {}
 
 function get_vars (meta)
     for k, v in pairs(meta) do
-      print(k," - ", v)
       if type(v) ~= "boolean" and type(v) ~= "date" and v.t == 'MetaInlines' then
         vars["$" .. k .. "$"] = {table.unpack(v)}
       end
